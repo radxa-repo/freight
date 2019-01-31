@@ -181,8 +181,7 @@ EOF
         # Finish the top-level `Release` file with references and
         # checksums for each sub-`Release` file and `Packages.gz` file.
         # In the future, `Sources` may find a place here, too.
-        find "$DISTCACHE" -mindepth 2 -type f -printf %P\\n |
-            grep -v ^\\. |
+        find "$DISTCACHE" -mindepth 2 -type f -not -name '.*' -printf %P\\n |
             while read -r FILE; do
                 SIZE="$(apt_filesize "$DISTCACHE/$FILE")"
                 echo " $(apt_md5 "$DISTCACHE/$FILE") $SIZE $FILE" >&3
