@@ -78,6 +78,22 @@ apt_filesize() {
     stat -c%s "$(readlink -f "$1")"
 }
 
+# Compute the hash of type $1 for source file $2. If the file has a
+# corresponding `.$filename-$method` file the hash in this file will be returned
+# instead. The hash will also be recomputed if the source file is newer than the
+# hash file.
+apt_hash() {
+    method="$1"
+    f="$2"
+    h="$(dirname "$f")/.$(basename "$f").${method}"
+
+    if [ ! -f "$h" ] || test "$f" -nt "$h"; then
+        eval "apt_${method}" "$f" > "$h"
+    fi
+
+    cat "${h}"
+}
+
 # Setup the repository for the distro named in the first argument,
 # including all packages read from `stdin`.
 apt_cache() {
@@ -184,10 +200,10 @@ EOF
         find "$DISTCACHE" -mindepth 2 -type f -not -name '.*' -printf %P\\n |
             while read -r FILE; do
                 SIZE="$(apt_filesize "$DISTCACHE/$FILE")"
-                echo " $(apt_md5 "$DISTCACHE/$FILE") $SIZE $FILE" >&3
-                echo " $(apt_sha1 "$DISTCACHE/$FILE") $SIZE $FILE" >&4
-                echo " $(apt_sha256 "$DISTCACHE/$FILE") $SIZE $FILE" >&5
-                echo " $(apt_sha512 "$DISTCACHE/$FILE") $SIZE $FILE" >&6
+                echo " $(apt_hash md5 "$DISTCACHE/$FILE") $SIZE $FILE" >&3
+                echo " $(apt_hash sha1 "$DISTCACHE/$FILE") $SIZE $FILE" >&4
+                echo " $(apt_hash sha256 "$DISTCACHE/$FILE") $SIZE $FILE" >&5
+                echo " $(apt_hash sha512 "$DISTCACHE/$FILE") $SIZE $FILE" >&6
             done 3>"$TMP/md5sums" 4>"$TMP/sha1sums" 5>"$TMP/sha256sums" 6>"$TMP/sha512sums"
         echo "MD5Sum:"
         cat "$TMP/md5sums"
