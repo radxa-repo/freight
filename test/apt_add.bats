@@ -46,6 +46,26 @@ setup() {
     test -e ${FREIGHT_LIB}/apt/example/source_1.0-1.tar.gz
 }
 
+@test "freight-add adds source .tar.bz2 files" {
+    run freight_add ${FIXTURES}/source_1.0-1.tar.bz2 apt/example
+    assert_success
+    assert_output "# [freight] added ${FIXTURES}/source_1.0-1.tar.bz2 to apt/example"
+    test -e ${FREIGHT_LIB}/apt/example/source_1.0-1.tar.bz2
+}
+
+@test "freight-add adds source .tar.xz files" {
+    run freight_add ${FIXTURES}/source_1.0-1.tar.xz apt/example
+    assert_success
+    assert_output "# [freight] added ${FIXTURES}/source_1.0-1.tar.xz to apt/example"
+    test -e ${FREIGHT_LIB}/apt/example/source_1.0-1.tar.xz
+}
+
+@test "freight-add adds source .tar.lzma files" {
+    run freight_add ${FIXTURES}/source_1.0-1.tar.lzma apt/example
+    assert_success
+    assert_output "# [freight] added ${FIXTURES}/source_1.0-1.tar.lzma to apt/example"
+    test -e ${FREIGHT_LIB}/apt/example/source_1.0-1.tar.lzma
+}
 @test "freight-add adds source .orig.tar.gz files" {
     run freight_add ${FIXTURES}/source_1.0.orig.tar.gz apt/example
     assert_success
