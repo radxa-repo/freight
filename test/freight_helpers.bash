@@ -31,7 +31,11 @@ freight_add() {
 }
 
 freight_cache() {
-    bin/freight cache -c $FREIGHT_CONFIG "$@"
+    if [ ! -e "$TMPDIR"/passphrase ]; then
+        bin/freight cache -c $FREIGHT_CONFIG "$@"
+    else
+        bin/freight cache -p "$TMPDIR"/passphrase -c $FREIGHT_CONFIG "$@"
+    fi
 }
 
 freight_cache_nohup() {
