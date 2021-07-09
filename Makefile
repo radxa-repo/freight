@@ -82,7 +82,7 @@ gh-pages: man
 	git checkout -q master
 
 test/tmp/bats:
-	git clone --depth 1 https://github.com/sstephenson/bats.git test/tmp/bats
+	git clone --depth 1 https://github.com/bats-core/bats-core.git test/tmp/bats
 
 test/tmp/bats-assert:
 	git clone --depth 1 https://github.com/jasonkarns/bats-assert.git test/tmp/bats-assert
