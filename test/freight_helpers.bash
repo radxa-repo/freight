@@ -22,6 +22,7 @@ freight_init() {
         -c $FREIGHT_CONFIG \
         --libdir $FREIGHT_LIB \
         --cachedir $FREIGHT_CACHE \
+        --archs "i386 amd64" \
         "$@"
 }
 
