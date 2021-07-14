@@ -5,17 +5,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GPG_TTY: $(tty)
-      FREIGHT_GPG_KEY_FIRST: ${{ secrets.FREIGHT_GPG_KEY_FIRST }}
-      FREIGHT_GPG_KEY_SECOND: ${{ secrets.FREIGHT_GPG_KEY_SECOND }}
-      FREIGHT_KEY_PASSWD: ${{ secrets.FREIGHT_KEY_PASSWD }}
-      GNUPGHOME: test/tmp/gpg
     steps:
       - uses: actions/checkout@v2
-      - run: mkdir -p "$GNUPGHOME"
-      - run: chmod 0700 "$GNUPGHOME"
-      - run: echo -n "$FREIGHT_GPG_KEY_FIRST" | base64 --decode > key_first.gpg
-      - run: echo -n "$FREIGHT_GPG_KEY_SECOND" | base64 --decode > key_second.gpg
-      - run: echo "$FREIGHT_KEY_PASSWD" | gpg --batch --yes --passphrase-fd 0 --import key_first.gpg
-      - run: echo "$FREIGHT_KEY_PASSWD" | gpg --batch --yes --passphrase-fd 0 --import key_second.gpg
-      - run: echo "$FREIGHT_KEY_PASSWD" > test/tmp/passphrase
       - run: make check
