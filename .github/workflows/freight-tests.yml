@@ -7,4 +7,5 @@ jobs:
       GPG_TTY: $(tty)
     steps:
       - uses: actions/checkout@v2
+      - run: find bin lib -type f | xargs shellcheck -s sh
       - run: make check
