@@ -31,15 +31,11 @@ freight_add() {
 }
 
 freight_cache() {
-    if [ ! -e "$TMPDIR"/passphrase ]; then
-        bin/freight cache -c $FREIGHT_CONFIG "$@"
-    else
-        bin/freight cache -p "$TMPDIR"/passphrase -c $FREIGHT_CONFIG "$@"
-    fi
+    bin/freight cache -p "$FIXTURES"/passphrase -c $FREIGHT_CONFIG "$@"
 }
 
 freight_cache_nohup() {
-    nohup bin/freight cache -c $FREIGHT_CONFIG "$@"
+    nohup bin/freight cache  -p "$FIXTURES"/passphrase -c $FREIGHT_CONFIG "$@"
 }
 
 # Generates a GPG key for all tests, once only due to entropy required
@@ -47,7 +43,7 @@ gpg_init() {
     if [ ! -e $GNUPGHOME ]; then
         mkdir -p $GNUPGHOME
         chmod 0700 $GNUPGHOME
-        gpg --batch --gen-key test/fixtures/gpg.conf
-        gpg --batch --gen-key test/fixtures/gpg2.conf
+        gpg --batch --yes --passphrase-fd 0 --import "$FIXTURES"/first_key.gpg < "$FIXTURES"/passphrase
+        gpg --batch --yes --passphrase-fd 0 --import "$FIXTURES"/second_key.gpg < "$FIXTURES"/passphrase
     fi
 }
