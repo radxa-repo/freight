@@ -103,3 +103,13 @@ Freight is [BSD-licensed](https://github.com/freight-team/freight/blob/master/LI
 The Freight test suite can be executed by running `make check` from any git checkout of this repository. git and GnuPG are required for most tests, and extended tests require apt.
 
 Contributions should include a new test case where possible by extending one or more of the `test/*.bats` files.
+
+#### Running tests in Docker
+
+It's easy to run the full test suite in Docker. The following command will build
+a Docker image with the necessary packages and run `make check` inside a Docker
+container:
+
+```sh
+docker run -ti --rm -v $(pwd):/freight -u $(id -u) -w /freight $(docker build -q .) make check
+```
