@@ -17,59 +17,59 @@ project. This fork and the associated GitHub organization,
 
 Install Freight and create a minimal configuration in `/usr/local/etc/freight.conf` or `/etc/freight.conf` as appropriate containing the name of your GPG key:
 
-	GPG="example@example.com"
+    GPG="example@example.com"
 
 Add packages to particular distros:
 
-	freight add foobar_1.2.3-1_all.deb apt/squeeze apt/lucid apt/natty
+    freight add foobar_1.2.3-1_all.deb apt/squeeze apt/lucid apt/natty
 
 Build the cache of all the files needed to be accepted as a Debian archive:
 
-	freight cache
+    freight cache
 
-If your system has GnuPG 2.x make sure that a gpg-agent is running and that you 
-have installed a pinentry package (e.g. pinentry-curses) that suits your needs. 
-On freight 0.3.11 and older you may also need to set the GPG_TTY environment 
+If your system has GnuPG 2.x make sure that a gpg-agent is running and that you
+have installed a pinentry package (e.g. pinentry-curses) that suits your needs.
+On freight 0.3.11 and older you may also need to set the GPG_TTY environment
 variable like this:
 
     export GPG_TTY=$(tty)
 
 Serve `/var/cache/freight` via your favorite web server and install it as an APT source:
 
-	echo "deb http://example.com $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/example.list
-	sudo wget -O /etc/apt/trusted.gpg.d/example.gpg http://example.com/keyring.gpg
-	sudo apt-get update
-	sudo apt-get -y install foobar
+    echo "deb http://example.com $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/example.list
+    sudo wget -O /etc/apt/trusted.gpg.d/example.gpg http://example.com/keyring.gpg
+    sudo apt-get update
+    sudo apt-get -y install foobar
 
-Make sure your webserver is configured to follow symlinks inside of the hosted directory. 
+Make sure your webserver is configured to follow symlinks inside of the hosted directory.
 
 ## Installation
 
 ### From source
 
-	git clone git://github.com/freight-team/freight.git
-	cd freight && make && sudo make install
+    git clone git://github.com/freight-team/freight.git
+    cd freight && make && sudo make install
 
 ### From a Debian archive
 
-	wget -O - https://swupdate.openvpn.net/repos/repo-public.gpg|sudo apt-key add -
-	echo "deb http://build.openvpn.net/debian/freight_team $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/freight.list
-	sudo apt-get update
-	sudo apt-get -y install freight
+    wget -O - https://swupdate.openvpn.net/repos/repo-public.gpg|sudo apt-key add -
+    echo "deb http://build.openvpn.net/debian/freight_team $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/freight.list
+    sudo apt-get update
+    sudo apt-get -y install freight
 
 ### From a custom-made Debian package
 
 You need `build-essential` package installed. Clone the freight repository, build a package and install it:
 
-	git clone git://github.com/freight-team/freight.git
-	cd freight && dpkg-buildpackage -uc -us -b
-	sudo dpkg -i ../freight_<version>-<build>_all.deb
+    git clone git://github.com/freight-team/freight.git
+    cd freight && dpkg-buildpackage -uc -us -b
+    sudo dpkg -i ../freight_<version>-<build>_all.deb
 
 ### From Fedora/EPEL repositories
 
 EL users must first [configure EPEL](http://fedoraproject.org/wiki/EPEL/FAQ#How_can_I_install_the_packages_from_the_EPEL_software_repository.3F).
 
-	yum -y install freight
+    yum -y install freight
 
 ## Documentation
 
@@ -103,3 +103,13 @@ Freight is [BSD-licensed](https://github.com/freight-team/freight/blob/master/LI
 The Freight test suite can be executed by running `make check` from any git checkout of this repository. git and GnuPG are required for most tests, and extended tests require apt.
 
 Contributions should include a new test case where possible by extending one or more of the `test/*.bats` files.
+
+#### Running tests in Docker
+
+It's easy to run the full test suite in Docker. The following command will build
+a Docker image with the necessary packages and run `make check` inside a Docker
+container:
+
+```sh
+docker run -ti --rm -v $(pwd):/freight -u $(id -u) -w /freight $(docker build -q .) make check
+```
