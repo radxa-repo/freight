@@ -132,7 +132,7 @@ apt_cache() {
             # and will find the associated *.orig.tar.gz, *.diff.gz, and/or
             # *.tar.gz as they are needed.
             *.dsc) apt_cache_source "$DIST" "$DISTCACHE" "$PATHNAME" "$COMP" "$PACKAGE" ;;
-            *.debian.tar.gz | *.debian.tar.bz2 | *.debian.tar.xz | *.debian.tar.lzma | *.diff.gz | *.orig.tar.gz | *.orig.tar.bz2 | *.orig.tar.xz | *.orig.tar.lzma | *.tar.gz | *.tar.bz2 | *.tar.xz | *.tar.lzma | *.deb-control | *.dsc-cached) ;;
+            *.debian.tar.gz | *.debian.tar.bz2 | *.debian.tar.xz | *.debian.tar.lzma | *.diff.gz | *.orig.tar.gz | *.orig.tar.bz2 | *.orig.tar.xz | *.orig.tar.lzma | *.tar.gz | *.tar.bz2 | *.tar.xz | *.tar.lzma | *.git | *.deb-control | *.dsc-cached) ;;
 
             *) echo "# [freight] skipping extraneous file $PATHNAME" >&2 ;;
         esac
@@ -401,6 +401,11 @@ apt_cache_source() {
     ORIG_FILENAME=
     DIFF_FILENAME=
     TAR_FILENAME=
+    GIT_FILENAME=
+
+    if [ -f "$VARLIB/apt/$DIST/$DIRNAME/${NAME}_${VERSION##*:}.git" ]; then
+        GIT_FILENAME="${NAME}_${VERSION##*:}.git"
+    fi
 
     for EXT in gz bz2 xz lzma; do
         if [ -z "$ORIG_FILENAME" ] && [ -f "$VARLIB/apt/$DIST/$DIRNAME/${NAME}_${ORIG_VERSION}.orig.tar.$EXT" ]; then
@@ -418,7 +423,7 @@ apt_cache_source() {
     done
 
     # Verify this package by ensuring the other necessary files are present.
-    [ -f "$VARLIB/apt/$DIST/$DIRNAME/$ORIG_FILENAME" ] && [ -f "$VARLIB/apt/$DIST/$DIRNAME/$DIFF_FILENAME" ] || [ -f "$VARLIB/apt/$DIST/$DIRNAME/$TAR_FILENAME" ] || {
+    [ -f "$VARLIB/apt/$DIST/$DIRNAME/$ORIG_FILENAME" ] && [ -f "$VARLIB/apt/$DIST/$DIRNAME/$DIFF_FILENAME" ] || [ -f "$VARLIB/apt/$DIST/$DIRNAME/$TAR_FILENAME" ] || [ -f "$VARLIB/apt/$DIST/$DIRNAME/$GIT_FILENAME" ] || {
         echo "# [freight] skipping invalid Debian source package $PATHNAME" >&2
         return
     }
@@ -431,7 +436,7 @@ apt_cache_source() {
     # if it isn't already there (which can happen when two packages derive
     # from the same original tarball).
     mkdir -p "$DISTCACHE/.refs/$COMP"
-    for FILENAME in "$DSC_FILENAME" "$ORIG_FILENAME" "$DIFF_FILENAME" "$TAR_FILENAME"; do
+    for FILENAME in "$DSC_FILENAME" "$ORIG_FILENAME" "$DIFF_FILENAME" "$TAR_FILENAME" "$GIT_FILENAME"; do
         [ -f "$VARLIB/apt/$DIST/$DIRNAME/$FILENAME" ] || continue
         [ -f "$DISTCACHE/.refs/$COMP/$FILENAME" ] ||
             ln "$VARLIB/apt/$DIST/$DIRNAME/$FILENAME" "$DISTCACHE/.refs/$COMP" >/dev/null 2>&1 ||
@@ -444,7 +449,7 @@ apt_cache_source() {
     # Link this source package into the pool.
     POOL="pool/$DIST/$COMP/$(apt_prefix "$NAME")/$NAME"
     mkdir -p "$VARCACHE/$POOL"
-    for FILENAME in "$DSC_FILENAME" "$ORIG_FILENAME" "$DIFF_FILENAME" "$TAR_FILENAME"; do
+    for FILENAME in "$DSC_FILENAME" "$ORIG_FILENAME" "$DIFF_FILENAME" "$TAR_FILENAME" "$GIT_FILENAME"; do
         if [ -f "$DISTCACHE/.refs/$COMP/$FILENAME" ] && ! [ -f "$VARCACHE/$POOL/$FILENAME" ]; then
             echo "# [freight] adding $FILENAME to pool" >&2
             ln "$DISTCACHE/.refs/$COMP/$FILENAME" "$VARCACHE/$POOL"
@@ -466,28 +471,28 @@ apt_cache_source() {
                 sed "s/^Source:/Package:/"
             echo "Directory: DIRECTORY"
             echo "Files:"
-            for FILENAME in "$DSC_FILENAME" "$ORIG_FILENAME" "$DIFF_FILENAME" "$TAR_FILENAME"; do
+            for FILENAME in "$DSC_FILENAME" "$ORIG_FILENAME" "$DIFF_FILENAME" "$TAR_FILENAME" "$GIT_FILENAME"; do
                 [ -f "$VARCACHE/$POOL/$FILENAME" ] || continue
                 SIZE="$(apt_filesize "$VARCACHE/$POOL/$FILENAME")"
                 MD5="$(apt_md5 "$VARCACHE/$POOL/$FILENAME")"
                 echo " $MD5 $SIZE $FILENAME"
             done
             echo "Checksums-Sha1:"
-            for FILENAME in "$DSC_FILENAME" "$ORIG_FILENAME" "$DIFF_FILENAME" "$TAR_FILENAME"; do
+            for FILENAME in "$DSC_FILENAME" "$ORIG_FILENAME" "$DIFF_FILENAME" "$TAR_FILENAME" "$GIT_FILENAME"; do
                 [ -f "$VARCACHE/$POOL/$FILENAME" ] || continue
                 SIZE="$(apt_filesize "$VARCACHE/$POOL/$FILENAME")"
                 SHA1="$(apt_sha1 "$VARCACHE/$POOL/$FILENAME")"
                 echo " $SHA1 $SIZE $FILENAME"
             done
             echo "Checksums-Sha256:"
-            for FILENAME in "$DSC_FILENAME" "$ORIG_FILENAME" "$DIFF_FILENAME" "$TAR_FILENAME"; do
+            for FILENAME in "$DSC_FILENAME" "$ORIG_FILENAME" "$DIFF_FILENAME" "$TAR_FILENAME" "$GIT_FILENAME"; do
                 [ -f "$VARCACHE/$POOL/$FILENAME" ] || continue
                 SIZE="$(apt_filesize "$VARCACHE/$POOL/$FILENAME")"
                 SHA256="$(apt_sha256 "$VARCACHE/$POOL/$FILENAME")"
                 echo " $SHA256 $SIZE $FILENAME"
             done
             echo "Checksums-Sha512:"
-            for FILENAME in "$DSC_FILENAME" "$ORIG_FILENAME" "$DIFF_FILENAME" "$TAR_FILENAME"; do
+            for FILENAME in "$DSC_FILENAME" "$ORIG_FILENAME" "$DIFF_FILENAME" "$TAR_FILENAME" "$GIT_FILENAME"; do
                 [ -f "$VARCACHE/$POOL/$FILENAME" ] || continue
                 SIZE="$(apt_filesize "$VARCACHE/$POOL/$FILENAME")"
                 SHA512="$(apt_sha512 "$VARCACHE/$POOL/$FILENAME")"
