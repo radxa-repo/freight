@@ -27,6 +27,16 @@ setup() {
     test -e ${FREIGHT_CACHE}/pool/example/main/s/source/source_1.0.orig.tar.gz
 }
 
+@test "freight-cache builds source-only archive for git format" {
+    freight_add ${FIXTURES}/source-git_1.0-1.dsc apt/example
+    freight_add ${FIXTURES}/source-git_1.0-1.git apt/example
+    run freight_cache
+    assert_success
+    echo -e "# [freight] adding source-git_1.0-1.dsc to pool\n# [freight] adding source-git_1.0-1.git to pool" | assert_output
+    test -e ${FREIGHT_CACHE}/pool/example/main/s/source-git/source-git_1.0-1.dsc
+    test -e ${FREIGHT_CACHE}/pool/example/main/s/source-git/source-git_1.0-1.git
+}
+
 @test "apt-get fetches source package list" {
     check_apt_support
     freight_add ${FIXTURES}/source_1.0-1.dsc apt/example

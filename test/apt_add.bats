@@ -66,11 +66,19 @@ setup() {
     assert_output "# [freight] added ${FIXTURES}/source_1.0-1.tar.lzma to apt/example"
     test -e ${FREIGHT_LIB}/apt/example/source_1.0-1.tar.lzma
 }
+
 @test "freight-add adds source .orig.tar.gz files" {
     run freight_add ${FIXTURES}/source_1.0.orig.tar.gz apt/example
     assert_success
     assert_output "# [freight] added ${FIXTURES}/source_1.0.orig.tar.gz to apt/example"
     test -e ${FREIGHT_LIB}/apt/example/source_1.0.orig.tar.gz
+}
+
+@test "freight-add adds source .git files" {
+    run freight_add ${FIXTURES}/source-git_1.0-1.git apt/example
+    assert_success
+    assert_output "# [freight] added ${FIXTURES}/source-git_1.0-1.git to apt/example"
+    test -e ${FREIGHT_LIB}/apt/example/source-git_1.0-1.git
 }
 
 @test "freight-add handles VARLIB being a symlink" {
