@@ -129,8 +129,8 @@ apt_cache() {
             *.deb | *.ddeb) apt_cache_binary "$DIST" "$DISTCACHE" "$PATHNAME" "$COMP" "$PACKAGE" ;;
 
             # Source packages.  The *.dsc file is considered the "entrypoint"
-            # and will find the associated *.orig.tar.gz, *.diff.gz, and/or
-            # *.tar.gz as they are needed.
+            # and will find the associated *.orig.tar.*, *.diff.*, *.tar.*, or
+            # *.git as they are needed.
             *.dsc) apt_cache_source "$DIST" "$DISTCACHE" "$PATHNAME" "$COMP" "$PACKAGE" ;;
             *.debian.tar.gz | *.debian.tar.bz2 | *.debian.tar.xz | *.debian.tar.lzma | *.diff.gz | *.orig.tar.gz | *.orig.tar.bz2 | *.orig.tar.xz | *.orig.tar.lzma | *.tar.gz | *.tar.bz2 | *.tar.xz | *.tar.lzma | *.git | *.deb-control | *.dsc-cached) ;;
 
@@ -382,9 +382,9 @@ EOF
 
 }
 
-# Add a source package to the given dist and to the pool.  *.orig.tar.gz,
-# *.diff.gz, and/or *.tar.gz will be found based on PATHNAME and associated
-# with the correct source package.
+# Add a source package to the given dist and to the pool. *.orig.tar.*,
+# *.diff.*, *.tar.*, or *.git will be found based on PATHNAME and
+# associated with the correct source package.
 apt_cache_source() {
     DIST="$1"
     DISTCACHE="$2"
