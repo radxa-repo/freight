@@ -7,6 +7,7 @@
 #/   -c<conf>, --conf=<conf>  config file to create (default etc/freight.conf)
 #/   --libdir=<libdir>        library directory (default var/lib/freight)
 #/   --cachedir=<cachedir>    cache directory (default var/cache/freight)
+#/   --pooldir=<pooldir>      symbolic pool directory
 #/   --archs=<archs>          architectures to support (default "i386 amd64")
 #/   --origin=<origin>        Debian archive Origin field (default "Freight")
 #/   --label=<label>          Debian archive Label field (default "Freight")
@@ -56,6 +57,8 @@ while [ "$#" -gt 0 ]; do
         --libdir=*) VARLIB="$(echo "$1" | cut -c"10-")" shift ;;
         --cachedir) VARCACHE="$2" shift 2 ;;
         --cachedir=*) VARCACHE="$(echo "$1" | cut -c"12-")" shift ;;
+        --pooldir) VARPOOL="$2" shift 2 ;;
+        --pooldir=*) VARPOOL="$(echo "$1" | cut -c"12-")" shift ;;
         --archs) ARCHS="$2" shift 2 ;;
         --archs=*) ARCHS="$(echo "$1" | cut -c"9-")" shift ;;
         --origin) ORIGIN="$2" shift 2 ;;
@@ -93,6 +96,7 @@ VARLIB="$VARLIB"
 VARCACHE="$VARCACHE"
 GPG="$GPG"
 EOF
+[ "$VARPOOL" ] && echo "VARPOOL=\"$VARPOOL\"" >>"$CONF"
 [ "$ARCHS" ] && echo "ARCHS=\"$ARCHS\"" >>"$CONF"
 [ "$ORIGIN" ] && echo "ORIGIN=\"$ORIGIN\"" >>"$CONF"
 [ "$LABEL" ] && echo "LABEL=\"$LABEL\"" >>"$CONF"

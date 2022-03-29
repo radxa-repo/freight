@@ -337,7 +337,7 @@ EOF
 
     # Link or copy this package into this distro's `.refs` directory.
     mkdir -p "$DISTCACHE/.refs/$COMP"
-    ln "$VARLIB/apt/$DIST/$PATHNAME" "$DISTCACHE/.refs/$COMP" >/dev/null 2>&1 ||
+    ln "$LINK_OPTION" "$VARLIB/apt/$DIST/$PATHNAME" "$DISTCACHE/.refs/$COMP" >/dev/null 2>&1 ||
         cp "$VARLIB/apt/$DIST/$PATHNAME" "$DISTCACHE/.refs/$COMP"
 
     # Package properties.  Remove the epoch from the version number
@@ -358,7 +358,7 @@ EOF
         else
             echo "# [freight] adding $PACKAGE to pool" >&2
         fi
-        ln "$DISTCACHE/.refs/$COMP/$PACKAGE" "$VARCACHE/$POOL/$FILENAME"
+        ln "$LINK_OPTION" "$DISTCACHE/.refs/$COMP/$PACKAGE" "$VARCACHE/$POOL/$FILENAME"
     fi
 
     # Build a list of the one-or-more `Packages` files to append with
@@ -439,7 +439,7 @@ apt_cache_source() {
     for FILENAME in "$DSC_FILENAME" "$ORIG_FILENAME" "$DIFF_FILENAME" "$TAR_FILENAME" "$GIT_FILENAME"; do
         [ -f "$VARLIB/apt/$DIST/$DIRNAME/$FILENAME" ] || continue
         [ -f "$DISTCACHE/.refs/$COMP/$FILENAME" ] ||
-            ln "$VARLIB/apt/$DIST/$DIRNAME/$FILENAME" "$DISTCACHE/.refs/$COMP" >/dev/null 2>&1 ||
+            ln "$LINK_OPTION" "$VARLIB/apt/$DIST/$DIRNAME/$FILENAME" "$DISTCACHE/.refs/$COMP" >/dev/null 2>&1 ||
             cp "$VARLIB/apt/$DIST/$DIRNAME/$FILENAME" "$DISTCACHE/.refs/$COMP"
     done
 
@@ -452,7 +452,7 @@ apt_cache_source() {
     for FILENAME in "$DSC_FILENAME" "$ORIG_FILENAME" "$DIFF_FILENAME" "$TAR_FILENAME" "$GIT_FILENAME"; do
         if [ -f "$DISTCACHE/.refs/$COMP/$FILENAME" ] && ! [ -f "$VARCACHE/$POOL/$FILENAME" ]; then
             echo "# [freight] adding $FILENAME to pool" >&2
-            ln "$DISTCACHE/.refs/$COMP/$FILENAME" "$VARCACHE/$POOL"
+            ln "$LINK_OPTION" "$DISTCACHE/.refs/$COMP/$FILENAME" "$VARCACHE/$POOL"
         fi
     done
 
@@ -514,7 +514,12 @@ apt_cache_source() {
 
 # Clean up old packages in the pool.
 apt_clean() {
-    find "$VARCACHE/pool" -links 1 -type f -delete
+    if [ -z "$VARPOOL" ]; then
+        find "$VARCACHE/pool" -links 1 -type f -delete
+    else
+        find "$VARLIB/apt" -xtype l -delete
+        find "$VARCACHE/pool" -xtype l -delete
+    fi
     find "$VARCACHE/pool" -type d -empty -delete
 }
 

@@ -51,8 +51,6 @@ done
 if [ "$CONF" ]; then
     if [ -f "$CONF" ]; then
         . "$CONF"
-        [ -z "$VARPOOL" ] || SYMLINKS="on"
-
     else
         echo "# [freight] $CONF does not exist" >&2
         exit 1
@@ -63,5 +61,17 @@ fi
 VARLIB=${VARLIB%%/}
 VARCACHE=${VARCACHE%%/}
 VARPOOL=${VARPOOL%%/}
+
+# Override options
+if [ -n "$VARPOOL" ]; then
+    # shellcheck disable=SC2034
+    LINK_OPTION="-rsL"
+    # shellcheck disable=SC2034
+    SYMLINKS="on"
+else
+    # For some reasons ln will not work if argv[1] == "" in tests
+    # shellcheck disable=SC2034
+    LINK_OPTION="--"
+fi
 
 # vim: et:ts=4:sw=4
