@@ -11,6 +11,8 @@ The Freight configuration is a `source`d shell script that defines a few importa
   The Freight library directory.  Typically _/var/lib/freight_.
 * `VARCACHE`:
   The Freight cache directory.  Typically _/var/cache/freight_.  This should be the document root of the web server.
+* `VARPOOL`:
+  The Freight symbolic pool directory. Forces Freight to use symbolic link instead of hard link, and file will be copied to this folder first so garbage collection can be done later on.
 * `ARCHS`:
   The architectures to support.  Typically _i386 amd64_.
 * `ORIGIN`:

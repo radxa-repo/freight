@@ -6,6 +6,11 @@
 VARLIB="/var/lib/freight"
 VARCACHE="/var/cache/freight"
 
+# If the file system does not support hard link, you can use symbolic
+# link instead. In this mode file will be copied to VARPOOL first, then
+# symlinked to VARLIB and finally VARCACHE. Implies SYMLINKS="on".
+VARPOOL=""
+
 # Default architectures.
 # shellcheck disable=SC2034
 ARCHS="i386 amd64"
@@ -46,6 +51,8 @@ done
 if [ "$CONF" ]; then
     if [ -f "$CONF" ]; then
         . "$CONF"
+        [ -z "$VARPOOL" ] || SYMLINKS="on"
+
     else
         echo "# [freight] $CONF does not exist" >&2
         exit 1
@@ -55,5 +62,6 @@ fi
 # Normalize directory names.
 VARLIB=${VARLIB%%/}
 VARCACHE=${VARCACHE%%/}
+VARPOOL=${VARPOOL%%/}
 
 # vim: et:ts=4:sw=4

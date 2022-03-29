@@ -5,6 +5,11 @@
 VARLIB="/var/lib/freight"
 VARCACHE="/var/cache/freight"
 
+# If the file system does not support hard link, you can use symbolic
+# link instead. In this mode file will be copied to VARPOOL first, then
+# symlinked to VARLIB and finally VARCACHE. Implies SYMLINKS="on".
+VARPOOL=""
+
 # Default `Origin`, `Label`, `NotAutomatic`, and
 # `ButAutomaticUpgrades` fields for `Release` files.
 ORIGIN="Freight"

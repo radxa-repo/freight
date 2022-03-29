@@ -20,6 +20,10 @@ The Freight library directory\. Typically \fI/var/lib/freight\fR\.
 The Freight cache directory\. Typically \fI/var/cache/freight\fR\. This should be the document root of the web server\.
 .
 .TP
+\fBVARPOOL\fR
+The Freight symbolic pool directory\. Forces Freight to use symbolic link instead of hard link, and file will be copied to this folder first so garbage collection can be done later on\.
+.
+.TP
 \fBARCHS\fR
 The architectures to support\. Typically \fIi386 amd64\fR\.
 .
