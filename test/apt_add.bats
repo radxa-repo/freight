@@ -19,6 +19,9 @@ setup() {
 }
 
 @test "freight-add adds package and hard link to multiple components" {
+    if grep VARPOOL $FREIGHT_CONFIG; then
+        skip "symbolic link mode"
+    fi
     freight_add ${FIXTURES}/test_1.0_all.deb apt/example/comp apt/example/another
     test -e ${FREIGHT_LIB}/apt/example/comp/test_1.0_all.deb
     test -e ${FREIGHT_LIB}/apt/example/another/test_1.0_all.deb

@@ -10,10 +10,15 @@ FREIGHT_HOME=${TMPDIR}/freight
 FREIGHT_CONFIG=${FREIGHT_HOME}/etc/freight.conf
 FREIGHT_CACHE=${FREIGHT_HOME}/var/cache
 FREIGHT_LIB=${FREIGHT_HOME}/var/lib
+FREIGHT_POOL=${FREIGHT_HOME}/var/pool
 
 export GNUPGHOME=${TMPDIR}/gpg
 
 freight_init() {
+    if [ "$FREIGHT_TEST_VARPOOL" = "1" ]; then
+        TEST_VARPOOL=--pooldir=$FREIGHT_POOL
+    fi
+
     gpg_init
     rm -rf $FREIGHT_HOME
     mkdir -p $FREIGHT_CACHE $FREIGHT_LIB
@@ -23,6 +28,7 @@ freight_init() {
         --libdir $FREIGHT_LIB \
         --cachedir $FREIGHT_CACHE \
         --archs "i386 amd64" \
+        $TEST_VARPOOL \
         "$@"
 }
 

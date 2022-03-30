@@ -14,3 +14,4 @@ test/tmp
 !test/fixtures/*
 debian/freight*
 debian/files
+sh

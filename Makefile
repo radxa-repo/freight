@@ -95,5 +95,6 @@ test/tmp/bin/sh: test/tmp/bin
 
 check: test/tmp/bats test/tmp/bats-assert test/tmp/bin/sh
 	PATH=test/tmp/bin/:$$PATH test/tmp/bats/bin/bats test/
+	PATH=test/tmp/bin/:$$PATH FREIGHT_TEST_VARPOOL=1 test/tmp/bats/bin/bats test/
 
 .PHONY: all clean install uninstall build man docs gh-pages check

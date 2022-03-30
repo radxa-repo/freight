@@ -63,6 +63,9 @@ setup() {
 }
 
 @test "freight-cache removes deleted packages from pool" {
+    if grep VARPOOL $FREIGHT_CONFIG; then
+        skip "symbolic link mode"
+    fi
     freight_cache -v
     test -e ${FREIGHT_CACHE}/pool/example/main/t/test/test_1.0_all.deb
     rm -f ${FREIGHT_LIB}/apt/example/test_1.0_all.deb
@@ -74,6 +77,9 @@ setup() {
 }
 
 @test "freight-cache --keep retains deleted packages in pool" {
+    if grep VARPOOL $FREIGHT_CONFIG; then
+        skip "symbolic link mode"
+    fi
     freight_cache -v
     test -e ${FREIGHT_CACHE}/pool/example/main/t/test/test_1.0_all.deb
     rm -f ${FREIGHT_LIB}/apt/example/test_1.0_all.deb
