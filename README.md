@@ -47,7 +47,7 @@ Make sure your webserver is configured to follow symlinks inside of the hosted d
 
 ### From source
 
-    git clone git://github.com/freight-team/freight.git
+    git clone https://github.com/freight-team/freight.git
     cd freight && make && sudo make install
 
 ### From a Debian archive
@@ -61,7 +61,7 @@ Make sure your webserver is configured to follow symlinks inside of the hosted d
 
 You need `build-essential` package installed. Clone the freight repository, build a package and install it:
 
-    git clone git://github.com/freight-team/freight.git
+    git clone https://github.com/freight-team/freight.git
     cd freight && dpkg-buildpackage -uc -us -b
     sudo dpkg -i ../freight_<version>-<build>_all.deb
 
