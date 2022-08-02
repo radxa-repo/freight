@@ -54,7 +54,13 @@ done
 if [ -n "$VARPOOL" ]; then
     mkdir -p "$VARPOOL"
     for PATHNAME in $PATHNAMES; do
-        cp "$PATHNAME" "$VARPOOL/"
+        # cp is not atomic, so cp to a tmp name, then mv (which is atomic)
+        # TO-DO: what if packages with the same name and version
+        #        are actually different in differen distros
+        #        when they need to link external libraries?
+        TMP="$(mktemp "$VARPOOL/freight.$$.XXXXXXXXXX")"
+        cp "$PATHNAME" "$TMP"
+        mv "$TMP" "$VARPOOL/$(basename "$PATHNAME")"
     done
 fi
 
